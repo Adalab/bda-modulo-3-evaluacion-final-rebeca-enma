@@ -177,11 +177,73 @@ print("Correlación de Pearson:", correlacion)
 
  #%%
  #¿Cuál es la distribución de los clientes por provincia o estado?
- 
-        
 
+fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (15,5))
+axes=axes.flat
+
+
+sns.barplot(x = "province",
+            y = "loyalty_number",
+            data = df_sin_duplicados,
+            palette = "magma", 
+            ax = axes[0]
+            )
+
+axes[0].set_title("Provincia")
+axes[0].set_xlabel("Recuento")
+axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=45)
+
+sns.barplot(x = "country",
+            y = "loyalty_number",
+            data = df_sin_duplicados,
+            palette = "magma", 
+            ax = axes[1]
+            )
+
+
+axes[1].set_title("Estado")
+axes[1].set_xlabel("Recuento")
+
+
+plt.tight_layout()
+        
 
 # %%
 df_sin_duplicados.columns
+
+# %%
+## ¿Cómo se compara el salario promedio entre los diferentes niveles educativos de los clientes?
+
+## ¿Cuál es la proporción de clientes con diferentes tipos de tarjetas de fidelidad?
+
+df_tipo_tarjeta = df_sin_duplicados.groupby("loyalty_card")["loyalty_number"].count().reset_index()
+
+
+colores = ["c", "cadetblue", "turquoise"]
+explode = ( 0.1 ,0.1 , 0.) # para sacar los quesitos hacia fuera
+
+plt.figure(figsize=(5,5))
+
+plt.pie("loyalty_number", labels= "loyalty_card",
+      data = df_tipo_tarjeta,
+      colors = colores,
+      textprops={'fontsize': 8},
+      autopct=  '%1.1f%%',
+      explode = explode)  
+
+plt.title("Distribucion por tipo de tarjeta", color = "teal", fontsize = 16) 
+plt.show();
+
+
+#%%
+## ¿Cómo se distribuyen los clientes según su estado civil y género?
+sns.countplot(x = "gender", 
+              data = df_tipo_tarjeta, 
+              palette = "viridis", 
+              hue = "marital_status")
+
+# cambiamos el nombre de los ejes usando los métodos 'plt.ylabel()' y 'plt.xlabel()'
+plt.xlabel("Resultado de la campaña anterior", fontsize = 9)
+plt.ylabel("Nº clientes",  fontsize = 9); 
 
 # %%
