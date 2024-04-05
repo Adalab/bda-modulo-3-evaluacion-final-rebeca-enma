@@ -87,7 +87,6 @@ print(f"Nº Duplicados: {df_sin_duplicados.duplicated().sum()}")
 
 #%%
 ## CAMBIOS COLUMNAS
-
    # Vamos a utilizar .loc[:]  para evitar el WARNING "SettingWithCopyWarning" para asegurarnos de modificar el DF original
 
 lista_columnas = ["cancellation_year", "cancellation_month"]
@@ -98,6 +97,9 @@ for col in lista_columnas:
 
 df_sin_duplicados.loc[:,"enrollment_type"] = df_sin_duplicados["enrollment_type"].apply(lambda celda: celda.split()[1] if len(celda.split()) > 1 and celda != "Standard" else celda)
 
+# En la columna salario hay importes negativos, asumo que es un error de mecanografia y hacemos cambio a valores positivos
+df_sin_duplicados.loc[:,"salary"] = df_sin_duplicados["salary"].apply(abs) # La funcion abs devuelve el valor absoluto
+
 #sp.exploracion_col_df(df_sin_duplicados)
 #sp.exploracion_df(df_sin_duplicados)
 
@@ -106,10 +108,24 @@ col_categoricas, col_numericas = sp.clasificacion_columnas(df_sin_duplicados)
 
 # %%
 ## 📊 Graficas y visualizaciones 
+sp.exploracion_df(df_sin_duplicados)
 sp.generar_graficas(df_sin_duplicados,col_categoricas,col_numericas)
 sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 
 ## Datos que hemos sacado de la exploracion visual:
+
+# Columnas que deberiamos cambiar a categoricas
+      # Year / Month / enrollment_year / enrollment_month
+
+# 
+
+# En la columna salario hay importes negativos, asumo que es un error de mecanografia y hacemos cambio a valores positivos
+
+
+#df_sin_duplicados[df_sin_duplicados["salary"] <= 0].sort_values(by="salary")
+#df_sin_duplicados[(df_sin_duplicados["salary"] >= 10000) & (df_sin_duplicados["salary"] <10000)].sort_values(by="salary")
+
+# %%
 
 
 # %%

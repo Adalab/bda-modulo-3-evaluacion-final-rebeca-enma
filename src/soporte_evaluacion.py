@@ -156,8 +156,10 @@ def cambio_int(celda):
     except:
         return pd.NA
     
+    
 
 def clasificacion_columnas(df):
+    """"Esta funcion devuelve 2 listas, columnas tipo objetov y columnas numericas"""
     columnas_object = df.select_dtypes(include=['object']).columns
     columnas_numericas = df.select_dtypes(include=['int', 'float']).columns
 
