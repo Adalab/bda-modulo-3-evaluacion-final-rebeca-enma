@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
+##⭐ EVALUACION PARTE 1 ⭐##
 ## 1--- Realizamos la apertura de los CSV y los convertimos en DF, le asignamos un nombre para poder localizarlos mas facilmente
 
 df_cust_activity = sp.apertura_csv("files/customer_flight_activity.csv")
@@ -100,11 +102,21 @@ df_sin_duplicados.loc[:,"enrollment_type"] = df_sin_duplicados["enrollment_type"
 # En la columna salario hay importes negativos, asumo que es un error de mecanografia y hacemos cambio a valores positivos
 df_sin_duplicados.loc[:,"salary"] = df_sin_duplicados["salary"].apply(abs) # La funcion abs devuelve el valor absoluto
 
+
+# lista_cambico_categoricas = ["year", "month"]
+
+# for col in lista_cambico_categoricas:
+#    df_sin_duplicados.loc[:,col]= df_sin_duplicados[col].apply(sp.cambio_categoricas)
+
+numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
+
+df_sin_duplicados.loc[:,"month"] = df_sin_duplicados["month"].map(numeros_a_meses)
+   
+
 #sp.exploracion_col_df(df_sin_duplicados)
 #sp.exploracion_df(df_sin_duplicados)
 
 col_categoricas, col_numericas = sp.clasificacion_columnas(df_sin_duplicados)
-
 
 # %%
 ## 📊 Graficas y visualizaciones 
@@ -117,15 +129,59 @@ sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 # Columnas que deberiamos cambiar a categoricas
       # Year / Month / enrollment_year / enrollment_month
 
-# 
 
-# En la columna salario hay importes negativos, asumo que es un error de mecanografia y hacemos cambio a valores positivos
+# En la grafica Boxplot podemos observar:
+      # las columnas points_redeemed, dolllar_cost_points aportan poca informacion debido a la distribucion de sus valores
+
 
 
 #df_sin_duplicados[df_sin_duplicados["salary"] <= 0].sort_values(by="salary")
 #df_sin_duplicados[(df_sin_duplicados["salary"] >= 10000) & (df_sin_duplicados["salary"] <10000)].sort_values(by="salary")
 
+
 # %%
 
+##⭐ EVALUACION PARTE 2⭐##
+# ¿Cómo se distribuye la cantidad de vuelos reservados por mes durante el año?
+
+sns.barplot(x="month", y = "flights_booked", data=df_sin_duplicados, color="turquoise")
+plt.xlabel("Vuelos Reservados")
+plt.ylabel("Frecuencia")
+plt.xticks(rotation = 45)
+plt.title("Distribución de Vuelos Reservados por Mes")
+
+         ## Podemos ver como los meses con el mayor numero de reservas corresponde con los meses de JULIO, JUNIO, AGOSTO y DICIEMBRE, podemos relacionarlo a los meses vacacionales.
+
+
+
+#%%
+# ¿Existe una relación entre la distancia de los vuelos y los puntos acumulados por los clientes?
+sns.regplot(x = "points_accumulated", 
+                y = "distance", 
+                data = df_sin_duplicados,
+                line_kws = {"color": "black", "linewidth": 1},
+                color = "darkcyan")
+
+
+plt.xlabel("Distancia")
+plt.ylabel("Puntos clientes")
+plt.title("Relación entre la distancia de los vuelos y los puntos acumulados'", fontsize = 10);
+
+
+correlacion = df_sin_duplicados['distance'].corr(df_sin_duplicados['points_accumulated'], method="pearson")
+
+print("Correlación de Pearson:", correlacion)        
+
+         ## Podemos ver una correlacion positiva entre ambas variables, viendo como aumenta la distancia tambien aumentan los puntosde los clientes.
+
+
+ #%%
+ #¿Cuál es la distribución de los clientes por provincia o estado?
+ 
+        
+
+
+# %%
+df_sin_duplicados.columns
 
 # %%

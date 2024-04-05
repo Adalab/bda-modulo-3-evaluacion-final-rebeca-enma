@@ -156,6 +156,14 @@ def cambio_int(celda):
     except:
         return pd.NA
     
+def cambio_categoricas(celda):
+    """
+    Esta función intenta convertir una celda a tipo de datos categórico"""  
+    try:
+        return str(celda)
+    except:
+        return celda
+    
     
 
 def clasificacion_columnas(df):
@@ -186,7 +194,7 @@ def generar_graficas(df, lista_categoricas, lista_numericas):
     
     longitud_c = round(len(lista_categoricas)/3)
 
-    fig, axes = plt.subplots(nrows=longitud_c, ncols=3, figsize=(20, 40))
+    fig, axes = plt.subplots(longitud_c, ncols=3, figsize=(20, 30))
     axes = axes.flatten()
 
     for i, col in enumerate(lista_categoricas):
