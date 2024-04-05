@@ -145,11 +145,11 @@ def comprobacion_valores_nulos(df):
 
 def cambio_int(celda):
     try:
-        print(celda.astype(int))
-        return celda.astype(int)
-
+        return int(celda)
     except:
-        return np.nan
+        return pd.NA
+    
+
 
 
 
