@@ -144,13 +144,74 @@ def comprobacion_valores_nulos(df):
 
 
 def cambio_int(celda):
+    """
+    Esta función intenta convertir una celda a un entero.
+    Parámetros:
+    - celda: El valor de la celda a convertir.
+    Devuelve:
+    - int: El valor convertido a entero, si la conversión es exitosa.
+    - pd.NA: Si la conversión falla"""
     try:
         return int(celda)
     except:
         return pd.NA
     
 
+def clasificacion_columnas(df):
+    columnas_object = df.select_dtypes(include=['object']).columns
+    columnas_numericas = df.select_dtypes(include=['int', 'float']).columns
+
+    return columnas_object, columnas_numericas
 
 
 
+def generar_graficas(df, lista_categoricas, lista_numericas):
+
+    longitud_n = round(len(lista_numericas)/3)
+
+    fig, axes = plt.subplots(nrows=longitud_n, ncols=3, figsize=(20, 20))
+    axes = axes.flatten()
+
+    for i, col in enumerate(lista_numericas):
+        plt.sca(axes[i])   # Establece el eje actual
+        plt.hist(df[col], 
+                bins=10, 
+                density=True, 
+                color="steelblue", 
+                edgecolor="black");
+        
+        plt.title(col)
+    
+    longitud_c = round(len(lista_categoricas)/3)
+
+    fig, axes = plt.subplots(nrows=longitud_c, ncols=3, figsize=(20, 40))
+    axes = axes.flatten()
+
+    for i, col in enumerate(lista_categoricas):
+        plt.sca(axes[i])   # Establece el eje actual
+        sns.countplot(x = col, 
+                data = df, 
+                color = "plum");
+        
+        plt.xticks(rotation = 45)
+        plt.title(col)
+
+    plt.tight_layout()
+
+
+
+def grafica_boxplot(df, lista_columnas):
+
+    longitud = round(len(lista_columnas)/2)
+
+    fig, axes = plt.subplots(longitud, 2, figsize=(30,20))
+    axes = axes.flat
+
+    for i, col in enumerate(lista_columnas):
+        sns.boxplot(x = col, data = df, ax=axes[i], color = "palegreen");
+
+        axes[i].set_title(col)
+        axes[i].set_xlabel("")
+
+    fig.tight_layout();
 # %%

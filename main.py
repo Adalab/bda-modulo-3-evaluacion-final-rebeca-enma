@@ -1,6 +1,8 @@
 #%%
 from src import soporte_evaluacion as sp
 import pandas as pd 
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 ## 1--- Realizamos la apertura de los CSV y los convertimos en DF, le asignamos un nombre para poder localizarlos mas facilmente
 
@@ -32,7 +34,7 @@ df_merge.head()
 # sp.exploracion_df(df_merge)
 
 # 3 ----  Revisamos que hay 1864 filas duplicadas y procedemos a eliminarlas
-# Decidimos eliminar las filas duplicadas, porque no aportan informacion 
+# Decidimos eliminar las filas duplicadas, porque no aportan informacion de valor y pueden alterar los resultados
 
 df_sin_duplicados = df_merge.drop_duplicates()
 df_sin_duplicados.name = "Customer Actividad - Historial sin duplicados"
@@ -43,12 +45,13 @@ print(f"Nº Duplicados: {df_sin_duplicados.duplicated().sum()}")
 # sp.exploracion_df(df_sin_duplicados)
 
 ## Comprobamos los valores nulos en el DF y sacamos el % sobre el total
-
 # sp.comprobacion_valores_nulos(df_sin_duplicados)
 
-## 📍 Decidimos no tratar los valores nulos en la columna "cancellation_year" y "cancellation_month" porque aportan informacion, ya que quiere decir que no se han cancelado, de esta informacion podemos sacar que se han cancelado 12.3% de los vuelos.
-#Exploracion columnas
+## 📍 Decidimos no tratar los valores nulos en la columna "cancellation_year" y "cancellation_month" porque aportan informacion, ya que quiere decir que no se han cancelado, de estos datos podemos sacar que se han cancelado 12.3% de los vuelos.
+
+
 #%%
+## EXPLORACION COLUMNAS
 #sp.exploracion_col_df(df_sin_duplicados)
 
 ## Documentacion columas 
@@ -77,25 +80,36 @@ print(f"Nº Duplicados: {df_sin_duplicados.duplicated().sum()}")
 # "ENROLLMENT_MONTH" - Mes de inscripcion 
 
 ## Cambiar 
-# ENROLLMENT_TYPE - 2 Valores tipo str "Tipo de Inscripción" (Standard,Promotion ) - 
-# SALARY -  ⚠️ CUIDADO NULOS
-# CANCELLATION_YEAR - Cambiar a INT, eliminar 0 - ⚠️ CUIDADO NULOS
-# CANCELLATION_MONTH - Cambiar a INT, eliminar 0 - ⚠️ CUIDADO NULOS
+# ✔️ ENROLLMENT_TYPE - 2 Valores tipo str "Tipo de Inscripción" (Standard,Promotion ) - 
+# SALARY -  ⚠️ CUIDADO NULOS, valores negativos
+# ✔️ CANCELLATION_YEAR - Categorica/int - ⚠️ CUIDADO NULOS 
+# ✔️ CANCELLATION_MONTH - Categorica/int - ⚠️ CUIDADO NULOS
 
-
+#%%
 ## CAMBIOS COLUMNAS
 
-# Vamos a utilizar .loc[:]  para evitar el WARNING "SettingWithCopyWarning" para asegurarnos de modificar el DF original
+   # Vamos a utilizar .loc[:]  para evitar el WARNING "SettingWithCopyWarning" para asegurarnos de modificar el DF original
 
 lista_columnas = ["cancellation_year", "cancellation_month"]
 for col in lista_columnas:
    df_sin_duplicados.loc[:,col]= df_sin_duplicados[col].apply(sp.cambio_int)
    
+   # Sobre cada celda de la columna "enrollment_type" aplicamos la funcion anonima que devuelve la segunda palabra de la celda si tiene más de una palabra y no es igual a "Standard"
 
 df_sin_duplicados.loc[:,"enrollment_type"] = df_sin_duplicados["enrollment_type"].apply(lambda celda: celda.split()[1] if len(celda.split()) > 1 and celda != "Standard" else celda)
 
-#%%
-sp.exploracion_col_df(df_sin_duplicados)
+#sp.exploracion_col_df(df_sin_duplicados)
+#sp.exploracion_df(df_sin_duplicados)
+
+col_categoricas, col_numericas = sp.clasificacion_columnas(df_sin_duplicados)
+
+
+# %%
+## 📊 Graficas y visualizaciones 
+sp.generar_graficas(df_sin_duplicados,col_categoricas,col_numericas)
+sp.grafica_boxplot(df_sin_duplicados,col_numericas)
+
+## Datos que hemos sacado de la exploracion visual:
 
 
 # %%
