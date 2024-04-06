@@ -177,7 +177,10 @@ def clasificacion_columnas(df):
 
 def generar_graficas(df, lista_categoricas, lista_numericas):
 
-    longitud_n = round(len(lista_numericas)/3)
+    longitud_n = int(len(lista_numericas)/3)
+
+    if len(lista_numericas)%3 != 0:
+        longitud_n += 1 
 
     fig, axes = plt.subplots(nrows=longitud_n, ncols=3, figsize=(20, 20))
     axes = axes.flatten()
@@ -191,8 +194,11 @@ def generar_graficas(df, lista_categoricas, lista_numericas):
                 edgecolor="black");
         
         plt.title(col)
-    
-    longitud_c = round(len(lista_categoricas)/3)
+
+    longitud_c = int(len(lista_categoricas)/3)
+
+    if len(lista_categoricas)%3 != 0:
+        longitud_c += 1 
 
     fig, axes = plt.subplots(longitud_c, ncols=3, figsize=(20, 30))
     axes = axes.flatten()
@@ -213,6 +219,9 @@ def generar_graficas(df, lista_categoricas, lista_numericas):
 def grafica_boxplot(df, lista_columnas):
 
     longitud = round(len(lista_columnas)/2)
+
+    if len(lista_columnas)%2 != 0:
+        longitud += 1 
 
     fig, axes = plt.subplots(longitud, 2, figsize=(30,20))
     axes = axes.flat

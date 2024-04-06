@@ -47,10 +47,25 @@ print(f"Nº Duplicados: {df_sin_duplicados.duplicated().sum()}")
 # sp.exploracion_df(df_sin_duplicados)
 
 ## Comprobamos los valores nulos en el DF y sacamos el % sobre el total
-# sp.comprobacion_valores_nulos(df_sin_duplicados)
+sp.comprobacion_valores_nulos(df_sin_duplicados)
 
-## 📍 Decidimos no tratar los valores nulos en la columna "cancellation_year" y "cancellation_month" porque aportan informacion, ya que quiere decir que no se han cancelado, de estos datos podemos sacar que se han cancelado 12.3% de los vuelos.
+      ## 📍 Decidimos no tratar los valores nulos en la columna "cancellation_year" y "cancellation_month" porque aportan informacion, ya que quiere decir que no se han cancelado, de estos datos podemos sacar que se han cancelado 12.3% de los vuelos.
 
+df_salario1 = df_sin_duplicados.loc[df_sin_duplicados["salary"].isnull()]
+df_salario1["education"].value_counts()
+
+df_salario2 = df_sin_duplicados.loc[(df_sin_duplicados["salary"].notnull()) & (df_sin_duplicados["education"] == "College")]
+df_salario2
+
+sns.boxplot(x = "salary",
+            y = "education", 
+            data = df_sin_duplicados, 
+            palette= "rainbow");
+
+
+      ## 📍 En la columna SALARIO comprobamos que los valores nulos 102260 percetenen a los clientes con EDUCACION = College.
+      # Decidimos no modificarlos ya que no podemos imputar media/moda o mediana porque desconocemos todos los datos de ese grupo, y tampoco utilizamos los metodos IterativeImputer o  KNNImputer, ya que aunque podriamos compararlos con otras categorias, no seria fiable por el mismo motivo que anteriormente hemos mencionado, no tenemos ningun referente con la misma educacion.
+      
 
 #%%
 ## EXPLORACION COLUMNAS
@@ -108,9 +123,9 @@ df_sin_duplicados.loc[:,"salary"] = df_sin_duplicados["salary"].apply(abs) # La 
 # for col in lista_cambico_categoricas:
 #    df_sin_duplicados.loc[:,col]= df_sin_duplicados[col].apply(sp.cambio_categoricas)
 
-numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
+# numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
 
-df_sin_duplicados.loc[:,"month"] = df_sin_duplicados["month"].map(numeros_a_meses)
+# df_sin_duplicados.loc[:,"month"] = df_sin_duplicados["month"].map(numeros_a_meses)
    
 
 #sp.exploracion_col_df(df_sin_duplicados)
@@ -133,8 +148,6 @@ sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 # En la grafica Boxplot podemos observar:
       # las columnas points_redeemed, dolllar_cost_points aportan poca informacion debido a la distribucion de sus valores
 
-
-
 #df_sin_duplicados[df_sin_duplicados["salary"] <= 0].sort_values(by="salary")
 #df_sin_duplicados[(df_sin_duplicados["salary"] >= 10000) & (df_sin_duplicados["salary"] <10000)].sort_values(by="salary")
 
@@ -142,9 +155,14 @@ sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 # %%
 
 ##⭐ EVALUACION PARTE 2⭐##
-# ¿Cómo se distribuye la cantidad de vuelos reservados por mes durante el año?
+#1️⃣ ¿Cómo se distribuye la cantidad de vuelos reservados por mes durante el año?
 
-sns.barplot(x="month", y = "flights_booked", data=df_sin_duplicados, color="turquoise")
+df_meses = df_sin_duplicados.sort_values("month")
+numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
+df_meses.loc[:,"month"] = df_meses["month"].map(numeros_a_meses)
+
+
+sns.barplot(x="month", y = "flights_booked", data=df_meses, color="turquoise")
 plt.xlabel("Vuelos Reservados")
 plt.ylabel("Frecuencia")
 plt.xticks(rotation = 45)
@@ -155,7 +173,7 @@ plt.title("Distribución de Vuelos Reservados por Mes")
 
 
 #%%
-# ¿Existe una relación entre la distancia de los vuelos y los puntos acumulados por los clientes?
+#2️⃣ ¿Existe una relación entre la distancia de los vuelos y los puntos acumulados por los clientes?
 sns.regplot(x = "points_accumulated", 
                 y = "distance", 
                 data = df_sin_duplicados,
@@ -176,7 +194,7 @@ print("Correlación de Pearson:", correlacion)
 
 
  #%%
- #¿Cuál es la distribución de los clientes por provincia o estado?
+ #3️⃣¿Cuál es la distribución de los clientes por provincia o estado?
 
 fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (15,5))
 axes=axes.flat
@@ -207,14 +225,26 @@ axes[1].set_xlabel("Recuento")
 
 plt.tight_layout()
         
+# %%
+#4️⃣ ¿Cómo se compara el salario promedio entre los diferentes niveles educativos de los clientes?
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='education', 
+            y='salary', 
+            data = df_sin_duplicados
+            , palette='twilight_shifted')
+
+plt.title('Distribución de salario por nivel educativo')
+plt.xlabel('Nivel educativo')
+plt.ylabel('Salario')
+plt.xticks(rotation=45);
+
+            # Desconocemos los datos de salario para el segmento con educacion COLLEGE
+            # En las demas categorias podemos visualmente podemos ver que los salarios ocupan rangos mas altos cuando el nivel de estudios es mayor, siendo el rango mas bajo ara instituto, seguido de bachillerato, posteriormente las personas con master y por ultimo la gente que ha cursado doctorados.
+
+
 
 # %%
-df_sin_duplicados.columns
-
-# %%
-## ¿Cómo se compara el salario promedio entre los diferentes niveles educativos de los clientes?
-
-## ¿Cuál es la proporción de clientes con diferentes tipos de tarjetas de fidelidad?
+#5️⃣¿Cuál es la proporción de clientes con diferentes tipos de tarjetas de fidelidad?
 
 df_tipo_tarjeta = df_sin_duplicados.groupby("loyalty_card")["loyalty_number"].count().reset_index()
 
@@ -236,14 +266,25 @@ plt.show();
 
 
 #%%
-## ¿Cómo se distribuyen los clientes según su estado civil y género?
-sns.countplot(x = "gender", 
-              data = df_tipo_tarjeta, 
-              palette = "viridis", 
-              hue = "marital_status")
+#6️⃣¿Cómo se distribuyen los clientes según su estado civil y género?
 
-# cambiamos el nombre de los ejes usando los métodos 'plt.ylabel()' y 'plt.xlabel()'
-plt.xlabel("Resultado de la campaña anterior", fontsize = 9)
-plt.ylabel("Nº clientes",  fontsize = 9); 
+plt.figure(figsize=(10, 6))
+sns.countplot(x='marital_status', 
+              hue='gender', 
+              data=df_sin_duplicados, palette='Spectral')
+
+plt.legend(title='Género')
+plt.title('Distribución de clientes por estado civil y genero')
+plt.xlabel('Estado civil')
+plt.ylabel('Clientes')
+
+df_estado_civil = df_sin_duplicados.groupby(["marital_status", "gender"])["loyalty_number"].count().reset_index(name="Recuento")
+total_general = df_estado_civil['Recuento'].sum()
+df_estado_civil['Porcentaje'] = round((df_estado_civil['Recuento'] / total_general) * 100, 2)
+df_estado_civil
+
+
+            # El mayor numero de personas se encuentran en el grupo "Casados" siendo ligeramente superior el numero de hombres que de mujeres,  seguido de solteros donde en este caso es levemente superior el numero de mujeres y finalmente divorciados donde tambien hay mas presencia de mujeres.
+
 
 # %%
