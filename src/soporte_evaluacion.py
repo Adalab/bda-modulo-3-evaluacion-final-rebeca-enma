@@ -233,4 +233,17 @@ def grafica_boxplot(df, lista_columnas):
         axes[i].set_xlabel("")
 
     fig.tight_layout();
+
+
+def categorizar_educacion(celda):
+
+    """Esta funcion categoriza los niveles de educacion en dos categorias mas amplias"""
+    try:
+        if celda == "College" or celda == "High School or Below" or celda == "Bachelor":
+            return "Educacion basica"
+        else:
+            return "Educacion superior"
+        
+    except:
+        return celda
 # %%

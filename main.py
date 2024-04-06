@@ -47,7 +47,8 @@ print(f"Nº Duplicados: {df_sin_duplicados.duplicated().sum()}")
 # sp.exploracion_df(df_sin_duplicados)
 
 ## Comprobamos los valores nulos en el DF y sacamos el % sobre el total
-sp.comprobacion_valores_nulos(df_sin_duplicados)
+nulos = sp.comprobacion_valores_nulos(df_sin_duplicados)
+display(nulos)
 
       ## 📍 Decidimos no tratar los valores nulos en la columna "cancellation_year" y "cancellation_month" porque aportan informacion, ya que quiere decir que no se han cancelado, de estos datos podemos sacar que se han cancelado 12.3% de los vuelos.
 
@@ -103,7 +104,7 @@ sns.boxplot(x = "salary",
 # ✔️ CANCELLATION_MONTH - Categorica/int - ⚠️ CUIDADO NULOS
 
 #%%
-## CAMBIOS COLUMNAS
+## 🛠️ CAMBIOS COLUMNAS
    # Vamos a utilizar .loc[:]  para evitar el WARNING "SettingWithCopyWarning" para asegurarnos de modificar el DF original
 
 lista_columnas = ["cancellation_year", "cancellation_month"]
@@ -116,17 +117,7 @@ df_sin_duplicados.loc[:,"enrollment_type"] = df_sin_duplicados["enrollment_type"
 
 # En la columna salario hay importes negativos, asumo que es un error de mecanografia y hacemos cambio a valores positivos
 df_sin_duplicados.loc[:,"salary"] = df_sin_duplicados["salary"].apply(abs) # La funcion abs devuelve el valor absoluto
-
-
-# lista_cambico_categoricas = ["year", "month"]
-
-# for col in lista_cambico_categoricas:
-#    df_sin_duplicados.loc[:,col]= df_sin_duplicados[col].apply(sp.cambio_categoricas)
-
-# numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
-
-# df_sin_duplicados.loc[:,"month"] = df_sin_duplicados["month"].map(numeros_a_meses)
-   
+ 
 
 #sp.exploracion_col_df(df_sin_duplicados)
 #sp.exploracion_df(df_sin_duplicados)
@@ -155,9 +146,11 @@ sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 # %%
 
 ##⭐ EVALUACION PARTE 2⭐##
+
 #1️⃣ ¿Cómo se distribuye la cantidad de vuelos reservados por mes durante el año?
 
 df_meses = df_sin_duplicados.sort_values("month")
+
 numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
 df_meses.loc[:,"month"] = df_meses["month"].map(numeros_a_meses)
 
@@ -190,7 +183,7 @@ correlacion = df_sin_duplicados['distance'].corr(df_sin_duplicados['points_accum
 
 print("Correlación de Pearson:", correlacion)        
 
-         ## Podemos ver una correlacion positiva entre ambas variables, viendo como aumenta la distancia tambien aumentan los puntosde los clientes.
+         ## Podemos ver una correlacion positiva entre ambas variables, podemos observar como aumenta la distancia tambien aumentan los puntos de los clientes.
 
 
  #%%
@@ -222,8 +215,9 @@ sns.barplot(x = "country",
 axes[1].set_title("Estado")
 axes[1].set_xlabel("Recuento")
 
-
 plt.tight_layout()
+
+
         
 # %%
 #4️⃣ ¿Cómo se compara el salario promedio entre los diferentes niveles educativos de los clientes?
@@ -242,12 +236,10 @@ plt.xticks(rotation=45);
             # En las demas categorias podemos visualmente podemos ver que los salarios ocupan rangos mas altos cuando el nivel de estudios es mayor, siendo el rango mas bajo ara instituto, seguido de bachillerato, posteriormente las personas con master y por ultimo la gente que ha cursado doctorados.
 
 
-
 # %%
 #5️⃣¿Cuál es la proporción de clientes con diferentes tipos de tarjetas de fidelidad?
 
 df_tipo_tarjeta = df_sin_duplicados.groupby("loyalty_card")["loyalty_number"].count().reset_index()
-
 
 colores = ["c", "cadetblue", "turquoise"]
 explode = ( 0.1 ,0.1 , 0.) # para sacar los quesitos hacia fuera
@@ -286,5 +278,20 @@ df_estado_civil
 
             # El mayor numero de personas se encuentran en el grupo "Casados" siendo ligeramente superior el numero de hombres que de mujeres,  seguido de solteros donde en este caso es levemente superior el numero de mujeres y finalmente divorciados donde tambien hay mas presencia de mujeres.
 
+
+# %%
+##⭐ EVALUACION PARTE 3⭐##
+
+# Objetivo del Ejercicio: evaluar si existen diferencias significativas en el número de vuelos reservados según el nivel educativo de los clientes. 
+
+# 1. Preparación de Datos: Filtra el conjunto de datos para incluir únicamente las columnas relevantes: 'Flights Booked' y 'Education'.
+
+# 2. Análisis Descriptivo: Agrupa los datos por nivel educativo y calcula estadísticas descriptivas básicas (como el promedio, la desviación estandar, los percentiles) del número de vuelos reservados para cada grupo.
+
+# 3. Prueba Estadística: Realiza una prueba de A/B testing para determinar si existe una diferencia significativa en el número de vuelos reservados entre los diferentes niveles educativos.
+
+
+df_sin_duplicados["cat_estudios"] = df_sin_duplicados["education"].apply(sp.categorizar_educacion)
+df_sin_duplicados["cat_estudios"].value_counts()
 
 # %%
