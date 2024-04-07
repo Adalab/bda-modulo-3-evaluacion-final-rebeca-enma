@@ -3,8 +3,6 @@
 # Importaciones necesarias
 import pandas as pd 
 import numpy as np
-from word2number import w2n
-import re 
 
 # Imputación de nulos usando métodos avanzados estadísticos
 # -----------------------------------------------------------------------
@@ -295,7 +293,23 @@ def test_homogeneidad(*args):
         print("No podemos afirmar que las varianzas son diferentes (p_valor_varianza =", p_valor_varianza, ")") 
 
 
+def test_man_whitney(dataframe, columnas_metricas, grupo_control, grupo_test, columna):
+   
+   control = dataframe[dataframe[columna] == grupo_control]
+   test = dataframe[dataframe[columna] == grupo_test]
 
+   for metrica in columnas_metricas:
+        
+        metrica_control = control[metrica]
+        metrica_test = test[metrica]
+        
+        # aplicamos el estadístico
+        u_statistic, p_value = stats.mannwhitneyu(metrica_control, metrica_test)
+        
+        if p_value < 0.05:
+            print(f"Para la métrica {metrica}, las medianas son diferentes {p_value}.")
+        else:
+            print(f"Para la métrica {metrica}, las medianas son iguales {p_value}.")
     
      
 # %%

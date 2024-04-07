@@ -3,6 +3,7 @@ from src import soporte_evaluacion as sp
 import pandas as pd 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import scipy.stats as stats
 
 ##⭐ EVALUACION PARTE 1 ⭐##
 ## 1--- Realizamos la apertura de los CSV y los convertimos en DF, le asignamos un nombre para poder localizarlos mas facilmente
@@ -315,7 +316,7 @@ df_sin_duplicados["cat_estudios"].value_counts()
       # H1 (hipotesis alternativa) - Existe diferencia en la reserva de vuelos dependiendo del nivel educativo
 
 
-# 1º Exploracion visual
+# Exploracion visual
 
 sns.barplot(x = "cat_estudios",
             y = "flights_booked", 
@@ -329,26 +330,12 @@ plt.ylabel("Total de vuelos reservados");
 
 
 
-#%%
 
-import scipy.stats as stats
-#%%
-# 2º Revisamos la distribucion de los datos
+# Revisamos la distribucion de los datos
 
 sp.test_normalidad(df_sin_duplicados,'flights_booked')
 
       ## Como no tiene una distribucion normal, hacemos el test de Mann Whitney (Trabaja con medianas)
 
-#Definimos los grupos
-grupo_nivel_basico = df_sin_duplicados[df_sin_duplicados["cat_estudios"] == "Educacion basica"]
-grupo_nivel_superior = df_sin_duplicados[df_sin_duplicados["cat_estudios"] == "Educacion superior"]
-
-metrica_basico = grupo_nivel_basico["flights_booked"]
-metrica_superior = grupo_nivel_superior["flights_booked"]
-
-u_statistic, p_value = stats.mannwhitneyu(metrica_basico, metrica_superior)
-
-print(f"Para la metrica flights_booked las medianas son diferentes: {p_value}")
-
-
-
+sp.test_man_whitney(df_sin_duplicados,["flights_booked"],"Educacion basica","Educacion superior","cat_estudios")
+# %%
