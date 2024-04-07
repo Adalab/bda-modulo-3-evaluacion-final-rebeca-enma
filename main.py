@@ -32,15 +32,16 @@ df_merge.name = "Customer Actividad - Historial"
 df_merge.head()
 
 # Exploracion DF unido
-# sp.exploracion_df(df_merge)
+sp.exploracion_df(df_merge)
 
 # 3 ----  Revisamos que hay 1864 filas duplicadas y procedemos a eliminarlas
 # Decidimos eliminar las filas duplicadas, porque no aportan informacion de valor y pueden alterar los resultados
 
+print(f"Nº Duplicados antes de la limpieza: {df_merge.duplicated().sum()}")
 df_sin_duplicados = df_merge.drop_duplicates()
 df_sin_duplicados.name = "Customer Actividad - Historial sin duplicados"
 print(f"El número de filas que tenemos es {df_sin_duplicados.shape[0]}, y el número de columnas es {df_sin_duplicados.shape[1]}")
-print(f"Nº Duplicados: {df_sin_duplicados.duplicated().sum()}")
+print(f"Nº Duplicados despues de la limpieza: {df_sin_duplicados.duplicated().sum()}")
 
 #Exploracion DF sin duplicados
 # sp.exploracion_df(df_sin_duplicados)
@@ -69,38 +70,14 @@ sns.boxplot(x = "salary",
 
 #%%
 ## EXPLORACION COLUMNAS
-#sp.exploracion_col_df(df_sin_duplicados)
+sp.exploracion_col_df(df_sin_duplicados)
 
-## Documentacion columas 
-
-## ✅ Columna que estan OK: 
-# 'LOYALTY_NUMBER' - Nº fidelidad 
-# 'YEAR' - Actualmente 2 valores (2017/2018)
-# 'MONTH'
-# "FLIGHTS_BOOKED" - Vuelos reservados
-# "FLIGHTS_WITH_COMPANIONS" - Vuelos con Acompañantes (Escala del 0 al 11)
-# 'TOTAL_FLIGHTS' - Vuelos totales  - 33 Valores
-# "DISTANCE" -  
-# "POINTS_ACCUMULATED" - 
-# "POINTS_REDEEMED" - Puntos Canjeados 
-# "DOLLAR_COST_POINTS_REDEEMED" - "Cuantificacion en dinero de los puntos canjeados"
-# "COUNTRY"  1 unico valor CANADA (No aporta nada) 
-# "PROVINCE" - Tipo str 
-# "CITY" - Tipo STR 
-# "POSTAL_CODE" - Alfanumerico - Tipo str 
-# "GENDER" - 2 categorias Tipo str
-# "EDUCATION" - 5 categorias Tipo str
-# "MARITAL_STATUS" - 3 Categorias Tipo str
-# "LOYALTY_CARD" - 3 Valores tipo str
-# "CLV" - "Customer Lifetime Value" (beneficio neto de cada cliente.)
-# "ENROLLMENT_YEAR" - Año de inscrpcion 
-# "ENROLLMENT_MONTH" - Mes de inscripcion 
-
-## Cambiar 
-# ✔️ ENROLLMENT_TYPE - 2 Valores tipo str "Tipo de Inscripción" (Standard,Promotion ) - 
-# SALARY -  ⚠️ CUIDADO NULOS, valores negativos
-# ✔️ CANCELLATION_YEAR - Categorica/int - ⚠️ CUIDADO NULOS 
-# ✔️ CANCELLATION_MONTH - Categorica/int - ⚠️ CUIDADO NULOS
+## Documentacion columas (para mas informacion, revisar documento)
+      ## Cambiar 
+      # ✔️ ENROLLMENT_TYPE - 2 Valores tipo str "Tipo de Inscripción" (Standard,Promotion ) - 
+      # SALARY -  ⚠️ CUIDADO NULOS, valores negativos
+      # ✔️ CANCELLATION_YEAR - Categorica/int - ⚠️ CUIDADO NULOS 
+      # ✔️ CANCELLATION_MONTH - Categorica/int - ⚠️ CUIDADO NULOS
 
 #%%
 ## 🛠️ CAMBIOS COLUMNAS
@@ -142,14 +119,18 @@ numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6
 df_meses.loc[:,"month"] = df_meses["month"].map(numeros_a_meses)
 
 
-sns.lineplot(data = df_meses, x= "month", y= "flights_booked", hue= "year", palette = "cool");
+sns.lineplot(data = df_meses, 
+             x= "month", 
+             y= "flights_booked", 
+             hue= "year", 
+             palette = "cool");
+
 plt.title("Distribucion vuelos/mes")
 plt.xlabel("Reserva de vuelos")
 plt.xticks(rotation = 45)
 plt.title("Distribución de Vuelos Reservados por Mes")
 
          ## Podemos ver como los meses con el mayor numero de reservas corresponde con los meses de JULIO, JUNIO, AGOSTO y DICIEMBRE, podemos relacionarlo a los meses vacacionales.
-
 
 
 #%%
@@ -359,7 +340,6 @@ df_sin_duplicados["cat_estudios"].value_counts()
       # H1 (hipotesis alternativa) - Existe diferencia en la reserva de vuelos dependiendo del nivel educativo
             #si p_value > 0.05 : son normales, aceptamos h0
             #si p_value < 0.05 : no son normales, rechazamos h0
-
 
 # Exploracion visual
 
