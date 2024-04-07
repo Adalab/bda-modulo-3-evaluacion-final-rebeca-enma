@@ -16,7 +16,7 @@ Identificar patrones y tendencias en la reserva de vuelos.
 - Explorar la distribución temporal de las reservas de vuelos y identificar posibles patrones estacionales.
 - Realizar análisis segmentados para comprender mejor las preferencias y comportamientos de reserva de diferentes grupos de clientes.
 
-## Heramientas
+## 🛠️ Heramientas
 
 He trabajado sobre archivos ".py" a traves de VSCode
 
@@ -45,7 +45,7 @@ Para el correcto funcionamiento de este repo, necesitarias importarte las siguie
 - from scipy.stats import shapiro, kstest
 
 
-## Estructura 📂
+## 📂 Estructura 
 
 - Main - archivo principal donde hemos realizado la exploracion, limpieza, visualizacion e hipotesis
 - SRC - donde se encuentra el soporte con todas las funciones para la utilizacion del main
