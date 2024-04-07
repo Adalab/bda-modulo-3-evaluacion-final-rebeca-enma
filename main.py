@@ -290,13 +290,13 @@ axes = axes.flat
 sns.barplot(x='education', 
             y='flights_booked', 
             data=df_sin_duplicados, 
-            palette='twilight_shifted',
+            palette='muted',
             ax=axes[0])
 
 axes[0].set_title("Vuelos reservados por nivel educativo")
 axes[0].set_xlabel("Nivel educativo")
 axes[0].set_ylabel("Vuelos reservados")
-axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=45)
+axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=90)
 
 # Segundo gráfico: Suma del número de vuelos reservados por nivel educativo
 sns.barplot(x="education", 
@@ -308,7 +308,7 @@ sns.barplot(x="education",
 axes[1].set_title("Suma del número de vuelos \n reservados por nivel educativo")
 axes[1].set_xlabel("Nivel educativo")
 axes[1].set_ylabel("Suma del número de vuelos reservados")
-axes[1].set_xticklabels(axes[0].get_xticklabels(), rotation=45)
+axes[1].set_xticklabels(axes[0].get_xticklabels(), rotation=90)
 
 # Tercer gráfico: Porcentaje de vuelos reservados por nivel educativo
 colores = ['cadetblue', 'steelblue', 'c', 'lightskyblue',"darkgrey"]
