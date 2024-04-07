@@ -48,9 +48,11 @@ Para el correcto funcionamiento de este repo, necesitarias importarte las siguie
 ## 📂 Estructura 
 
 - Main - archivo principal donde hemos realizado la exploracion, limpieza, visualizacion e hipotesis
-- SRC - donde se encuentra el soporte con todas las funciones para la utilizacion del main
-- Files - archivos proporcionados para su exploracion y documentos obtenidos tras la limpieza y analisis.
-- Documentacion - Breve explicacion de las columnas que componen el DF 
+- SRC - carpeta donde esta ubicado el soporte con todas las funciones para la utilizacion del main
+- Files - carpeta donde se ubican los archivos proporcionados para su exploracion y documentos obtenidos tras la limpieza y analisis.
+- Other     
+    - 📝 Documentacion: Breve explicacion de las columnas que componen el DF (el tipo de datos, valores nulos ...)
+    - Enunciado de la prueba 
 
 
 ## Autor
