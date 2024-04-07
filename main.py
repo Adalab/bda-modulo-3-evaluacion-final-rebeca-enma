@@ -4,7 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 ##⭐ EVALUACION PARTE 1 ⭐##
 ## 1--- Realizamos la apertura de los CSV y los convertimos en DF, le asignamos un nombre para poder localizarlos mas facilmente
 
@@ -17,7 +16,6 @@ df_cust_history.name = "Clientes Historial"
 ## Cambiamos el nombre de las columnas
 sp.cambio_nombre_columnas_df(df_cust_activity)
 sp.cambio_nombre_columnas_df(df_cust_history)
-
 
 #Imprimimos por pantalla las 5 primeras lineas de cada DF
 # display(df_cust_activity.head(2))
@@ -130,17 +128,6 @@ sp.exploracion_df(df_sin_duplicados)
 sp.generar_graficas(df_sin_duplicados,col_categoricas,col_numericas)
 sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 
-## Datos que hemos sacado de la exploracion visual:
-
-# Columnas que deberiamos cambiar a categoricas
-      # Year / Month / enrollment_year / enrollment_month
-
-
-# En la grafica Boxplot podemos observar:
-      # las columnas points_redeemed, dolllar_cost_points aportan poca informacion debido a la distribucion de sus valores
-
-#df_sin_duplicados[df_sin_duplicados["salary"] <= 0].sort_values(by="salary")
-#df_sin_duplicados[(df_sin_duplicados["salary"] >= 10000) & (df_sin_duplicados["salary"] <10000)].sort_values(by="salary")
 
 
 # %%
@@ -311,17 +298,57 @@ display(df_niveles_educativos["flights_booked"].describe())
 sns.barplot(x='education', 
             y='flights_booked', 
             data=df_sin_duplicados, 
-            palette='twilight_shifted')
+            palette='twilight_shifted');
+
+plt.ticklabel_format(style='plain', axis='y')
 
 
 # 3. Prueba Estadística: Realiza una prueba de A/B testing para determinar si existe una diferencia significativa en el número de vuelos reservados entre los diferentes niveles educativos.
 
 #%%
-df_sin_duplicados["cat_estudios"] = df_sin_duplicados["education"].apply(sp.categorizar_educacion)
+df_sin_duplicados.loc[:,"cat_estudios"] = df_sin_duplicados["education"].apply(sp.categorizar_educacion)
+
 df_sin_duplicados["cat_estudios"].value_counts()
 
+      # Formulacion de hipotesis:
+      # H0 (hipotesis nula) - No existe diferencia entre el nivel educativo de los clientes y el nº de vuelos reservados por estos
+      # H1 (hipotesis alternativa) - Existe diferencia en la reserva de vuelos dependiendo del nivel educativo
+
+
+# 1º Exploracion visual
+
+sns.barplot(x = "cat_estudios",
+            y = "flights_booked", 
+            data = df_sin_duplicados, 
+            palette = "rainbow");
+
+# Añadir título y etiquetas de ejes
+plt.title("Total de vuelos reservados por categoría de estudios")
+plt.xlabel("Categoría de estudios")
+plt.ylabel("Total de vuelos reservados");
 
 
 
+#%%
 
-# %%
+import scipy.stats as stats
+#%%
+# 2º Revisamos la distribucion de los datos
+
+sp.test_normalidad(df_sin_duplicados,'flights_booked')
+
+      ## Como no tiene una distribucion normal, hacemos el test de Mann Whitney (Trabaja con medianas)
+
+#Definimos los grupos
+grupo_nivel_basico = df_sin_duplicados[df_sin_duplicados["cat_estudios"] == "Educacion basica"]
+grupo_nivel_superior = df_sin_duplicados[df_sin_duplicados["cat_estudios"] == "Educacion superior"]
+
+metrica_basico = grupo_nivel_basico["flights_booked"]
+metrica_superior = grupo_nivel_superior["flights_booked"]
+
+u_statistic, p_value = stats.mannwhitneyu(metrica_basico, metrica_superior)
+
+print(f"Para la metrica flights_booked las medianas son diferentes: {p_value}")
+
+
+

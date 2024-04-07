@@ -18,11 +18,12 @@ from sklearn.impute import KNNImputer
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from scipy import stats
+from scipy.stats import shapiro, kstest
+
 # Configuración
 pd.set_option('display.max_columns', None) # para poder visualizar todas las columnas de los DataFrames
 
-
-# %%
 
 
 def apertura_csv(ruta, quitar_primera_columna=False):
@@ -246,4 +247,55 @@ def categorizar_educacion(celda):
         
     except:
         return celda
+    
+
+def test_normalidad(df, columna):
+
+    """Calculamos la normalidad
+    si lalongitud es > 5000 utilizamos Kolmogorov y sino Shapiro
+      si p_value > 0.05 : son normales, aceptamos h0
+      si p_value < 0.05 : no son normales, rechazamos h0"""
+
+    alpha = 0.05
+
+    longitud = df[columna].shape[0]
+
+    if longitud < 5000:
+
+        p_value = shapiro(df[columna]).pvalue
+
+        if p_value > alpha:
+            print("Los datos se ajustan a una distribución normal (p-value =", p_value, ")")
+        else:
+            print("Los datos no se ajustan a una distribución normal (p-value =", p_value, ")")
+
+    else: 
+        p_value = kstest(df[columna], "norm").pvalue
+
+        if p_value > alpha:
+            print("Los datos se ajustan a una distribución normal (p-value =", p_value, ")")
+        else:
+            print("Los datos no se ajustan a una distribución normal (p-value =", p_value, ")")        
+
+
+def test_homogeneidad(*args):
+    
+    """ Si el p-valor < 0.05 podemos concluir que las varianzas son diferentes entre los grupos. Si el p-valor > 0.05, no podemos afirmar que las varianzas son diferentes"""
+
+    if len(args) == 2:
+        p_valor_varianza = stats.levene(*args, center = "median")[1]
+    else:
+        p_valor_varianza = stats.bartlett(*args)[1]
+        
+    alfa = 0.05
+
+    if p_valor_varianza < alfa:
+        print("Podemos concluir que las varianzas son diferentes entre los grupos (p_valor_varianza =", p_valor_varianza, ")")
+    else:
+        print("No podemos afirmar que las varianzas son diferentes (p_valor_varianza =", p_valor_varianza, ")") 
+
+
+
+    
+     
 # %%
