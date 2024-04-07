@@ -42,7 +42,7 @@ def cambio_nombre_columnas_df(dataframe):
     MODIFICA EL DF """
 
     dataframe.columns = [col.lower().strip().replace(" ","_") for col in dataframe.columns]
-    print(f"Se ha cambiado el nombre en las columnas del DF {dataframe.name}, actualmente son:\n{dataframe.columns}\n")
+    print(f"Se ha cambiado el nombre en las columnas del DF {dataframe.name}, actualmente son:\n{list(dataframe.columns)}\n")
 
 
 

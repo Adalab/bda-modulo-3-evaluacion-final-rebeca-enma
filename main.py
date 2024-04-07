@@ -192,45 +192,59 @@ print("Correlación de Pearson:", correlacion)
 fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (15,5))
 axes=axes.flat
 
-
-sns.barplot(x = "province",
-            y = "loyalty_number",
+sns.countplot(x = "province", 
             data = df_sin_duplicados,
-            palette = "magma", 
-            ax = axes[0]
-            )
+            palette = "magma",
+            order= df_sin_duplicados["province"].value_counts().index,
+            ax = axes[0])
 
-axes[0].set_title("Provincia")
-axes[0].set_xlabel("Recuento")
+
+axes[0].set_title("Distribucion por provincia")
+axes[0].set_xlabel("Provincia")
+axes[0].set_ylabel("Recuento")
 axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=45)
 
 sns.barplot(x = "country",
             y = "loyalty_number",
             data = df_sin_duplicados,
             palette = "magma", 
-            ax = axes[1]
-            )
+            ax = axes[1])
 
-
-axes[1].set_title("Estado")
-axes[1].set_xlabel("Recuento")
+axes[1].set_title("Distribucion por estado")
+axes[1].set_xlabel("Estado")
+axes[1].set_ylabel("Recuento")
 
 plt.tight_layout()
 
-
-        
 # %%
 #4️⃣ ¿Cómo se compara el salario promedio entre los diferentes niveles educativos de los clientes?
+fig, axes = plt.subplots(nrows = 1, ncols = 2, figsize = (15,5))
+axes=axes.flat
+
 plt.figure(figsize=(10, 6))
 sns.boxplot(x='education', 
             y='salary', 
-            data = df_sin_duplicados
-            , palette='twilight_shifted')
+            data = df_sin_duplicados, 
+            palette='twilight_shifted', 
+            ax = axes[0])
 
-plt.title('Distribución de salario por nivel educativo')
-plt.xlabel('Nivel educativo')
-plt.ylabel('Salario')
-plt.xticks(rotation=45);
+axes[0].set_xlabel('Nivel educativo')
+axes[0].set_ylabel('Salario')
+
+
+sns.barplot(x= "education", 
+            y= "salary", 
+            data= df_sin_duplicados,
+            palette= "twilight_shifted",
+            ax = axes[1])
+
+
+
+axes[1].set_title("Comparación del salario promedio de por nivel educativo")
+axes[1].set_xlabel("Nivel educativo")
+axes[1].set_ylabel("Salario")
+
+plt.suptitle("Comparación del salario promedio de por nivel educativo");
 
             # Desconocemos los datos de salario para el segmento con educacion COLLEGE
             # En las demas categorias podemos visualmente podemos ver que los salarios ocupan rangos mas altos cuando el nivel de estudios es mayor, siendo el rango mas bajo ara instituto, seguido de bachillerato, posteriormente las personas con master y por ultimo la gente que ha cursado doctorados.
@@ -286,13 +300,27 @@ df_estado_civil
 
 # 1. Preparación de Datos: Filtra el conjunto de datos para incluir únicamente las columnas relevantes: 'Flights Booked' y 'Education'.
 
+df_filtrado = df_sin_duplicados[['flights_booked','education']]
+display(df_filtrado.head(3))
+
 # 2. Análisis Descriptivo: Agrupa los datos por nivel educativo y calcula estadísticas descriptivas básicas (como el promedio, la desviación estandar, los percentiles) del número de vuelos reservados para cada grupo.
+
+df_niveles_educativos = df_filtrado.groupby("education")
+display(df_niveles_educativos["flights_booked"].describe())
+
+sns.barplot(x='education', 
+            y='flights_booked', 
+            data=df_sin_duplicados, 
+            palette='twilight_shifted')
+
 
 # 3. Prueba Estadística: Realiza una prueba de A/B testing para determinar si existe una diferencia significativa en el número de vuelos reservados entre los diferentes niveles educativos.
 
-
+#%%
 df_sin_duplicados["cat_estudios"] = df_sin_duplicados["education"].apply(sp.categorizar_educacion)
 df_sin_duplicados["cat_estudios"].value_counts()
+
+
 
 
 
