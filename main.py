@@ -294,4 +294,6 @@ df_estado_civil
 df_sin_duplicados["cat_estudios"] = df_sin_duplicados["education"].apply(sp.categorizar_educacion)
 df_sin_duplicados["cat_estudios"].value_counts()
 
+
+
 # %%
