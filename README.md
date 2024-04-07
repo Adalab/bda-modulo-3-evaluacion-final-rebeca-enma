@@ -1,6 +1,5 @@
 
-# 🖥️ EVALUACION FINAL - SQL  📊
-
+# 🖥️ EVALUACION FINAL - Transformacion de datos con Python  📊
 
 
 ## Introduccion
@@ -22,23 +21,27 @@ He trabajado sobre archivos ".py" a traves de VSCode
 
 Para el correcto funcionamiento de este repo, necesitarias importarte las siguientes librerias:
 
-import pandas as pd 
-import numpy as np
+### Librerías para el tratamiento de los datos
+# ----
+- import pandas as pd 
+- import numpy as np
 
-# Imputación de nulos usando métodos avanzados estadísticos
+- Imputación de nulos usando métodos avanzados estadísticos
+### -----------------------------------------------------------------------
+- from sklearn.impute import SimpleImputer
+- from sklearn.experimental import enable_iterative_imputer
+- from sklearn.impute import IterativeImputer
+- from sklearn.impute import KNNImputer
+
+### Librerías de visualización
 # -----------------------------------------------------------------------
-from sklearn.impute import SimpleImputer
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import IterativeImputer
-from sklearn.impute import KNNImputer
+- import seaborn as sns
+- import matplotlib.pyplot as plt
 
-# Librerías de visualización
+### Librerías para calculos estadisticos
 # -----------------------------------------------------------------------
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-from scipy import stats
-from scipy.stats import shapiro, kstest
+- from scipy import stats
+- from scipy.stats import shapiro, kstest
 
 
 ## Estructura 📂
