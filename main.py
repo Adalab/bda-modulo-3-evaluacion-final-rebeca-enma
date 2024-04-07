@@ -3,7 +3,7 @@ from src import soporte_evaluacion as sp
 import pandas as pd 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import scipy.stats as stats
+
 
 ##⭐ EVALUACION PARTE 1 ⭐##
 ## 1--- Realizamos la apertura de los CSV y los convertimos en DF, le asignamos un nombre para poder localizarlos mas facilmente
@@ -117,7 +117,6 @@ df_sin_duplicados.loc[:,"enrollment_type"] = df_sin_duplicados["enrollment_type"
 # En la columna salario hay importes negativos, asumo que es un error de mecanografia y hacemos cambio a valores positivos
 df_sin_duplicados.loc[:,"salary"] = df_sin_duplicados["salary"].apply(abs) # La funcion abs devuelve el valor absoluto
  
-
 #sp.exploracion_col_df(df_sin_duplicados)
 #sp.exploracion_df(df_sin_duplicados)
 
@@ -130,7 +129,6 @@ sp.generar_graficas(df_sin_duplicados,col_categoricas,col_numericas)
 sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 
 
-
 # %%
 
 ##⭐ EVALUACION PARTE 2⭐##
@@ -140,12 +138,13 @@ sp.grafica_boxplot(df_sin_duplicados,col_numericas)
 df_meses = df_sin_duplicados.sort_values("month")
 
 numeros_a_meses = {1: "January",2: "February",3: "March", 4: "April", 5: "May",6: "June",7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
+
 df_meses.loc[:,"month"] = df_meses["month"].map(numeros_a_meses)
 
 
-sns.barplot(x="month", y = "flights_booked", data=df_meses, color="turquoise")
-plt.xlabel("Vuelos Reservados")
-plt.ylabel("Frecuencia")
+sns.lineplot(data = df_meses, x= "month", y= "flights_booked", hue= "year", palette = "cool");
+plt.title("Distribucion vuelos/mes")
+plt.xlabel("Reserva de vuelos")
 plt.xticks(rotation = 45)
 plt.title("Distribución de Vuelos Reservados por Mes")
 
@@ -258,6 +257,7 @@ plt.pie("loyalty_number", labels= "loyalty_card",
 plt.title("Distribucion por tipo de tarjeta", color = "teal", fontsize = 16) 
 plt.show();
 
+      # Observamos como el 45% de los clientes tienen una tarjeta STAR, seguido de un 34% de clientes con tarjeta NOVA y por ultimo 21% tarjeta AURORA
 
 #%%
 #6️⃣¿Cómo se distribuyen los clientes según su estado civil y género?
@@ -289,24 +289,67 @@ df_estado_civil
 # 1. Preparación de Datos: Filtra el conjunto de datos para incluir únicamente las columnas relevantes: 'Flights Booked' y 'Education'.
 
 df_filtrado = df_sin_duplicados[['flights_booked','education']]
-display(df_filtrado.head(3))
+
 
 # 2. Análisis Descriptivo: Agrupa los datos por nivel educativo y calcula estadísticas descriptivas básicas (como el promedio, la desviación estandar, los percentiles) del número de vuelos reservados para cada grupo.
 
 df_niveles_educativos = df_filtrado.groupby("education")
 display(df_niveles_educativos["flights_booked"].describe())
 
+
+df_vuelos_suma = df_filtrado.groupby("education")["flights_booked"].sum().reset_index()
+display(df_vuelos_suma)
+
+
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(15, 5))
+axes = axes.flat
+
+
+# Primer gráfico: Vuelos reservados por nivel educativo
 sns.barplot(x='education', 
             y='flights_booked', 
             data=df_sin_duplicados, 
-            palette='twilight_shifted');
+            palette='twilight_shifted',
+            ax=axes[0])
 
-plt.ticklabel_format(style='plain', axis='y')
+axes[0].set_title("Vuelos reservados por nivel educativo")
+axes[0].set_xlabel("Nivel educativo")
+axes[0].set_ylabel("Vuelos reservados")
+axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=45)
+
+# Segundo gráfico: Suma del número de vuelos reservados por nivel educativo
+sns.barplot(x="education", 
+            y="flights_booked", 
+            data=df_vuelos_suma, 
+            palette="muted",
+            ax=axes[1])
+
+axes[1].set_title("Suma del número de vuelos \n reservados por nivel educativo")
+axes[1].set_xlabel("Nivel educativo")
+axes[1].set_ylabel("Suma del número de vuelos reservados")
+axes[1].set_xticklabels(axes[0].get_xticklabels(), rotation=45)
+
+# Tercer gráfico: Porcentaje de vuelos reservados por nivel educativo
+colores = ['cadetblue', 'steelblue', 'c', 'lightskyblue',"darkgrey"]
+
+
+sizes = df_vuelos_suma['flights_booked']
+labels = df_vuelos_suma['education']
+axes[2].pie(sizes, labels=labels,
+            autopct='%1.1f%%', colors=colores, 
+            textprops={'fontsize': 8}, 
+            startangle=90)
+
+axes[2].set_title("Distribución vuelos reservados \n por nivel educativo")
+axes[2].legend(bbox_to_anchor=(1.2, 1))
+
+
+plt.tight_layout()
+plt.show()
 
 
 # 3. Prueba Estadística: Realiza una prueba de A/B testing para determinar si existe una diferencia significativa en el número de vuelos reservados entre los diferentes niveles educativos.
 
-#%%
 df_sin_duplicados.loc[:,"cat_estudios"] = df_sin_duplicados["education"].apply(sp.categorizar_educacion)
 
 df_sin_duplicados["cat_estudios"].value_counts()
@@ -314,6 +357,8 @@ df_sin_duplicados["cat_estudios"].value_counts()
       # Formulacion de hipotesis:
       # H0 (hipotesis nula) - No existe diferencia entre el nivel educativo de los clientes y el nº de vuelos reservados por estos
       # H1 (hipotesis alternativa) - Existe diferencia en la reserva de vuelos dependiendo del nivel educativo
+            #si p_value > 0.05 : son normales, aceptamos h0
+            #si p_value < 0.05 : no son normales, rechazamos h0
 
 
 # Exploracion visual
@@ -329,13 +374,23 @@ plt.xlabel("Categoría de estudios")
 plt.ylabel("Total de vuelos reservados");
 
 
-
-
 # Revisamos la distribucion de los datos
 
 sp.test_normalidad(df_sin_duplicados,'flights_booked')
 
-      ## Como no tiene una distribucion normal, hacemos el test de Mann Whitney (Trabaja con medianas)
+      ## Como no tiene una distribucion normal, hacemos el test de Mann Whitney (Prueba NO parametrica, que trabaja con MEDIANAS)
 
 sp.test_man_whitney(df_sin_duplicados,["flights_booked"],"Educacion basica","Educacion superior","cat_estudios")
+
+      ## Resultado: rechazamos la hipótesis nula (H0), hay evidencia estadística para aceptaar la hipótesis alternativa (H1).
+      # Hay diferencia significativa en la reserva de vuelos entre los clientes con educación básica y los clientes con educación superior
+
+
+# Next Steps:
+      # Plantear otro tipo de hipotesis entre diferentes grupos para evaluar correlaciones
+      # Profundizar en la busqueda de patrones y limpieza de datos.
+      # Analisis de grupos adicionales, exploracion de variables correlacionadas, analisis de tendencias
+      # Carga de de datos en BBDD
+      # Construccion de modelos predictivos
+
 # %%
